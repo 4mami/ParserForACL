@@ -54,7 +54,7 @@ class Parser
     when :bool
       checktoken(:bool)
     else
-      errormsg(__method__, @lexer.lineno, @token, :int, :bool)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :int, :bool)
     end
   end
 
@@ -74,7 +74,7 @@ class Parser
     when :write
       printst
     else
-      errormsg(__method__, @lexer.lineno, @token, :id, :write)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :write)
     end
   end
 
@@ -121,7 +121,7 @@ class Parser
     when :ee
       checktoken(:ee)
     else
-      errormsg(__method__, @lexer.lineno, @token, :lt, :gt, :le, :ge, :ne, :ee)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :lt, :gt, :le, :ge, :ne, :ee)
     end
   end
 
@@ -142,7 +142,7 @@ class Parser
     when :oror
       checktoken(:oror)
     else
-      errormsg(__method__, @lexer.lineno, @token, :plus, :minus, :oror)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :plus, :minus, :oror)
     end
   end
 
@@ -163,7 +163,7 @@ class Parser
     when :andand
       checktoken(:andand)
     else
-      errormsg(__method__, @lexer.lineno, @token, :mult, :div, :andand)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :mult, :div, :andand)
     end
   end
 
@@ -185,7 +185,7 @@ class Parser
       checktoken(:not)
       factor
     else
-      errormsg(__method__, @lexer.lineno, @token, :id, :num, :true, :false, :lpar, :not)
+      errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :num, :true, :false, :lpar, :not)
     end
   end
 
@@ -198,13 +198,13 @@ class Parser
     else
       prev_func = caller[0][/`([^']*)'/, 1]
       line_num = @lexer.lineno
-      errormsg(prev_func, line_num, @token, expected)
+      errormsg(prev_func, line_num, @lexime, @token, expected)
     end
   end
 
-  def errormsg(func_name, line_num, now_token, *tokens)
+  def errormsg(func_name, line_num, current_lexime, current_token, *tokens)
     tks = tokens.join(' or ')
-    puts "Syntax error! (#{func_name}(line: #{line_num})(current: #{now_token})) : #{tks} is expected."
+    puts "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
     exit(1)
   end
 end
