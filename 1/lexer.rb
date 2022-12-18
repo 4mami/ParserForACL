@@ -80,6 +80,9 @@ class Lexer
       when /\A>=/
         yield :ge, $&
         @line = $'
+      when /\A\!=/
+        yield :ne, $&
+        @line = $'
       when /\A==/
         yield :ee, $&
         @line = $'
