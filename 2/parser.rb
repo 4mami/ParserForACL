@@ -41,10 +41,10 @@ class Parser
   end
 
   def ids
-    checktoken(:id)
+    addId
     while @token == :comma
       checktoken(:comma)
-      checktoken(:id)
+      addId
     end
   end
 
@@ -80,7 +80,7 @@ class Parser
   end
 
   def assignst
-    checktoken(:id)
+    checkId
     checktoken(:coleq)
     expression
     checktoken(:semi)
@@ -171,7 +171,7 @@ class Parser
   def factor
     case @token
     when :id
-      checktoken(:id)
+      checkId
     when :num
       checktoken(:num)
     when :true
@@ -190,7 +190,7 @@ class Parser
     end
   end
 
-  def addId()
+  def addId
     lexime = @lexime
     checktoken(:id, 1)
     if @id_table[lexime]
@@ -202,7 +202,7 @@ class Parser
     end
   end
 
-  def checkId()
+  def checkId
     lexime = @lexime
     checktoken(:id, 1)
     if !@id_table[lexime]
