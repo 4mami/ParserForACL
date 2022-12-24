@@ -158,24 +158,40 @@ class Parser
   end
 
   def term
-    factor
+    line_num = @lexer.lineno
+    type, value = factor
     while @token == :mult || @token == :div || @token == :andand
-      mop
-      factor
+      case @token
+      when :mult
+        checktoken(:mult)
+        type2, value2 = factor
+        if type != :int || type2 != :int
+          puts "Semantic error! (line: #{line_num})(func: term) : Multiplication cannot be done because #{value} or #{value2} is not integer."
+          puts "Abort."
+          exit(1)
+        end
+        value *= value2
+      when :div
+        checktoken(:div)
+        type2, value2 = factor
+        if type != :int || type2 != :int
+          puts "Semantic error! (line: #{line_num})(func: term) : Division cannot be done because #{value} or #{value2} is not integer."
+          puts "Abort."
+          exit(1)
+        end
+        value /= value2
+      when :andand
+        checktoken(:andand)
+        type2, value2 = factor
+        if type != :bool || type2 != :bool
+          puts "Semantic error! (line: #{line_num})(func: term) : Logical operation(&&) cannot be done because #{value} or #{value2} is not bool."
+          puts "Abort."
+          exit(1)
+        end
+        value = value && value2
+      end
     end
-  end
-
-  def mop
-    case @token
-    when :mult
-      checktoken(:mult)
-    when :div
-      checktoken(:div)
-    when :andand
-      checktoken(:andand)
-    else
-      errormsg(__method__, @lexer.lineno, @lexime, @token, :mult, :div, :andand)
-    end
+    return type, value
   end
 
   def factor
