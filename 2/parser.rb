@@ -181,20 +181,39 @@ class Parser
   def factor
     case @token
     when :id
+      lexime = @lexime
+      line_num = @lexer.lineno
       checkId
+      # 識別子が右辺に登場する場合は、既に代入されていないといけない
+      if !@id_table[lexime][1]
+        puts "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
+        puts "Abort."
+        exit(1)
+      end
+      return @id_table[lexime][0], @id_table[lexime][1]
     when :num
+      lexime = @lexime
       checktoken(:num)
+      return :int, lexime.to_i
     when :true
       checktoken(:true)
+      return :bool, true
     when :false
       checktoken(:false)
+      return :bool, false
     when :lpar
       checktoken(:lpar)
-      expression
+      type, value = expression
       checktoken(:rpar)
+      return type, value
     when :not
       checktoken(:not)
-      factor
+      type, value = factor
+      if type == :bool
+        return :bool, !value
+      else
+        # TODO: 整数を反転させた結果を返す
+      end
     else
       errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :num, :true, :false, :lpar, :not)
     end
