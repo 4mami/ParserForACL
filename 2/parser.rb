@@ -2,7 +2,7 @@ class Parser
   def initialize(lexer)
     @lexime = ''
     @lexer = lexer
-    @id_table = {}
+    @id_table = {} # => {"var_a"=>[:int, 1], "var_b"=>[:bool, true]}
   end
 
   def parse
@@ -42,7 +42,7 @@ class Parser
     checktoken(:semi)
 
     tmp_ids.each do |id|
-      @id_table[id] = token
+      @id_table[id][0] = token
     end
   end
 
@@ -203,19 +203,19 @@ class Parser
   def addId
     lexime = @lexime
     checktoken(:id, 1)
-    if @id_table[lexime]
+    if @id_table.has_key?(lexime)
       puts "This variable(#{lexime}) is already declared(#{caller[0][/`([^']*)'/, 1]})."
       puts "Abort."
       exit(1)
     else
-      @id_table[lexime] = lexime
+      @id_table[lexime] = Array.new(2)
     end
   end
 
   def checkId
     lexime = @lexime
     checktoken(:id, 1)
-    if !@id_table[lexime]
+    if !(@id_table.has_key?(lexime))
       puts "This variable(#{lexime}) is not declared(#{caller[0][/`([^']*)'/, 1]})."
       puts "Abort."
       exit(1)
