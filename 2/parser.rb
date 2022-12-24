@@ -34,18 +34,28 @@ class Parser
   end
 
   def decl
-    ids
+    tmp_ids = ids
     checktoken(:colon)
+    # 型情報（シンボル）を取得
+    token = @token
     type
     checktoken(:semi)
+
+    tmp_ids.each do |id|
+      @id_table[id] = token
+    end
   end
 
   def ids
+    tmp_ids = []
+    tmp_ids.push(@lexime)
     addId
     while @token == :comma
       checktoken(:comma)
+      tmp_ids.push(@lexime)
       addId
     end
+    tmp_ids
   end
 
   def type
