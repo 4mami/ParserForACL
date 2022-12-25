@@ -166,27 +166,21 @@ class Parser
         checktoken(:mult)
         type2, value2 = factor
         if type != :int || type2 != :int
-          puts "Semantic error! (line: #{line_num})(func: term) : Multiplication cannot be done because #{value} or #{value2} is not integer."
-          puts "Abort."
-          exit(1)
+          semanticErrormsg(__method__, line_num, 'Multiplication', 'integer', value, value2)
         end
         value *= value2
       when :div
         checktoken(:div)
         type2, value2 = factor
         if type != :int || type2 != :int
-          puts "Semantic error! (line: #{line_num})(func: term) : Division cannot be done because #{value} or #{value2} is not integer."
-          puts "Abort."
-          exit(1)
+          semanticErrormsg(__method__, line_num, 'Division', 'integer', value, value2)
         end
         value /= value2
       when :andand
         checktoken(:andand)
         type2, value2 = factor
         if type != :bool || type2 != :bool
-          puts "Semantic error! (line: #{line_num})(func: term) : Logical operation(&&) cannot be done because #{value} or #{value2} is not bool."
-          puts "Abort."
-          exit(1)
+          semanticErrormsg(__method__, line_num, 'Logical operation(&&)', 'bool', value, value2)
         end
         value = value && value2
       end
@@ -273,6 +267,12 @@ class Parser
   def errormsg(func_name, line_num, current_lexime, current_token, *tokens)
     tks = tokens.join(' or ')
     puts "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
+    exit(1)
+  end
+
+  def semanticErrormsg(func_name, line_num, opr_name, type_name, value, value2)
+    puts "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} or #{value2} is not #{type_name}."
+    puts "Abort."
     exit(1)
   end
 end
