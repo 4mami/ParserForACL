@@ -111,6 +111,7 @@ class Parser
   end
 
   def expression
+    line_num = @lexer.lineno
     type, value = sexp
     case @token
     when :lt, :gt, :le, :ge, :ne, :ee
