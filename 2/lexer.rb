@@ -56,6 +56,9 @@ class Lexer
       when /\A\|\|/
         yield :oror, $&
         @line = $'
+      when /\A\!=/
+        yield :ne, $&
+        @line = $'
       when /\A\!/
         yield :not, $&
         @line = $'
@@ -68,17 +71,17 @@ class Lexer
       when /\A:/
         yield :colon, $&
         @line = $'
-      when /\A</
-        yield :lt, $&
-        @line = $'
-      when /\A>/
-        yield :gt, $&
-        @line = $'
       when /\A<=/
         yield :le, $&
         @line = $'
+      when /\A</
+        yield :lt, $&
+        @line = $'
       when /\A>=/
         yield :ge, $&
+        @line = $'
+      when /\A>/
+        yield :gt, $&
         @line = $'
       when /\A==/
         yield :ee, $&
