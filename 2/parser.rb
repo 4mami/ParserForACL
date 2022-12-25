@@ -137,24 +137,34 @@ class Parser
   end
 
   def sexp
-    term
+    line_num = @lexer.lineno
+    type, value = term
     while @token == :plus || @token == :minus || @token == :oror
-      aop
-      term
+      case @token
+      when :plus
+        checktoken(:plus)
+        type2, value2 = term
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Addition', 'integer', value, value2)
+        end
+        value += value2
+      when :minus
+        checktoken(:minus)
+        type2, value2 = term
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Subtraction', 'integer', value, value2)
+        end
+        value -= value2
+      when :oror
+        checktoken(:oror)
+        type2, value2 = term
+        if type != :bool || type2 != :bool
+          semanticErrormsg(__method__, line_num, 'Logical operation(||)', 'bool', value, value2)
+        end
+        value = value || value2
+      end
     end
-  end
-
-  def aop
-    case @token
-    when :plus
-      checktoken(:plus)
-    when :minus
-      checktoken(:minus)
-    when :oror
-      checktoken(:oror)
-    else
-      errormsg(__method__, @lexer.lineno, @lexime, @token, :plus, :minus, :oror)
-    end
+    return type, value
   end
 
   def term
