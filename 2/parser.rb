@@ -90,10 +90,17 @@ class Parser
   end
 
   def assignst
+    line_num = @lexer.lineno
+    lexime = @lexime
+
     checkId
     checktoken(:coleq)
-    expression
+    type, value = expression
+    if @id_table[lexime][0] != type
+      semanticErrormsg(__method__, line_num, 'Assignation', 'same type', lexime, value)
+    end
     checktoken(:semi)
+    @id_table[lexime][1] = value
   end
 
   def printst
