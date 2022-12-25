@@ -240,7 +240,7 @@ class Parser
       line_num = @lexer.lineno
       checkId
       # 識別子が右辺に登場する場合は、既に代入されていないといけない
-      if !@id_table[lexime][1]
+      if @id_table[lexime][1].nil?
         puts "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
         puts "Abort."
         exit(1)
