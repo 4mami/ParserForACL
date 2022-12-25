@@ -103,37 +103,63 @@ class Parser
   end
 
   def expression
-    sexp
-    exptail
-  end
-
-  def exptail
+    type, value = sexp
     case @token
     when :lt, :gt, :le, :ge, :ne, :ee
-      cop
-      sexp
+      case @token
+      when :lt # <
+        checktoken(:lt)
+        type2, value2 = sexp
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(<)', 'integer', value, value2)
+        end
+        type = :bool
+        value = value < value2
+      when :gt # >
+        checktoken(:gt)
+        type2, value2 = sexp
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(>)', 'integer', value, value2)
+        end
+        type = :bool
+        value = value > value2
+      when :le # <=
+        checktoken(:le)
+        type2, value2 = sexp
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(<=)', 'integer', value, value2)
+        end
+        type = :bool
+        value = value <= value2
+      when :ge # >=
+        checktoken(:ge)
+        type2, value2 = sexp
+        if type != :int || type2 != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(>=)', 'integer', value, value2)
+        end
+        type = :bool
+        value = value >= value2
+      when :ne # !=
+        checktoken(:ne)
+        type2, value2 = sexp
+        if type != type2
+          semanticErrormsg(__method__, line_num, 'Comparison operation(!=)', 'same type', value, value2)
+        end
+        type = :bool
+        value = value != value2
+      when :ee # ==
+        checktoken(:ee)
+        type2, value2 = sexp
+        if type != type2
+          semanticErrormsg(__method__, line_num, 'Comparison operation(==)', 'same type', value, value2)
+        end
+        type = :bool
+        value = value == value2
+      end
     else
-
+      # イプシロン
     end
-  end
-
-  def cop
-    case @token
-    when :lt
-      checktoken(:lt)
-    when :gt
-      checktoken(:gt)
-    when :le
-      checktoken(:le)
-    when :ge
-      checktoken(:ge)
-    when :ne
-      checktoken(:ne)
-    when :ee
-      checktoken(:ee)
-    else
-      errormsg(__method__, @lexer.lineno, @lexime, @token, :lt, :gt, :le, :ge, :ne, :ee)
-    end
+    return type, value
   end
 
   def sexp
@@ -283,7 +309,7 @@ class Parser
   end
 
   def semanticErrormsg(func_name, line_num, opr_name, type_name, value, value2)
-    puts "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} or #{value2} is not #{type_name}."
+    puts "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} and/or #{value2} is not #{type_name}."
     puts "Abort."
     exit(1)
   end
