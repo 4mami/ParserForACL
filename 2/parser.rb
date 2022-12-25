@@ -98,8 +98,9 @@ class Parser
 
   def printst
     checktoken(:write)
-    expression
+    ret = expression
     checktoken(:semi)
+    puts ret.last
   end
 
   def expression
