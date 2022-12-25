@@ -1,8 +1,14 @@
+require './nodes'
+require './evalvisitor'
+require './typevisitor'
+
 class Parser
   def initialize(lexer)
     @lexime = ''
     @lexer = lexer
-    @id_table = {} # => {"var_a"=>[:int, 1], "var_b"=>[:bool, true]}
+    @id_table = {} # => {"var_a"=>object(Id), "var_b"=>object(Id)}
+    @evalvisitor = EvalVisitor.new
+    @typevisitor = TypeVisitor.new
   end
 
   def parse
@@ -42,7 +48,11 @@ class Parser
     checktoken(:semi)
 
     tmp_ids.each do |id|
-      @id_table[id][0] = token
+      if token == :int
+        @id_table[id].val = Num.new(nil)
+      else
+        @id_table[id].val = Bool.new(nil)
+      end
     end
   end
 
@@ -95,12 +105,12 @@ class Parser
 
     checkId
     checktoken(:coleq)
-    type, value = expression
-    if @id_table[lexime][0] != type
-      semanticErrormsg(__method__, line_num, 'Assignation', 'same type', lexime, value)
+    node = expression
+    if @id_table[lexime].accept(@typevisitor) != node.accept(@typevisitor)
+      semanticErrormsg(__method__, line_num, 'Assignation', 'same type', lexime, node.accept(@evalvisitor))
     end
     checktoken(:semi)
-    @id_table[lexime][1] = value
+    return Assign.new(@id_table[lexime], node)
   end
 
   def printst
@@ -240,12 +250,12 @@ class Parser
       line_num = @lexer.lineno
       checkId
       # 識別子が右辺に登場する場合は、既に代入されていないといけない
-      if !@id_table[lexime][1]
+      if @id_table[lexime].val.val.nil?
         puts "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
         puts "Abort."
         exit(1)
       end
-      return @id_table[lexime][0], @id_table[lexime][1]
+      return @id_table[lexime]
     when :num
       lexime = @lexime
       checktoken(:num)
@@ -283,7 +293,7 @@ class Parser
       puts "Abort."
       exit(1)
     else
-      @id_table[lexime] = Array.new(2)
+      @id_table[lexime] = Id.new(nil)
     end
   end
 
