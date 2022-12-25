@@ -24,7 +24,7 @@ class EvalVisitor
     when Ne
     when Ee
     when Assign
-      left.val.val = right.accept(self)
+      node.left.val.val = node.right.accept(self)
     when Print
     when Statements
     end
