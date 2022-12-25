@@ -231,9 +231,10 @@ class Parser
 
   def addId
     lexime = @lexime
+    line_num = @lexer.lineno
     checktoken(:id, 1)
     if @id_table.has_key?(lexime)
-      puts "This variable(#{lexime}) is already declared(#{caller[0][/`([^']*)'/, 1]})."
+      puts "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is already declared."
       puts "Abort."
       exit(1)
     else
@@ -243,9 +244,10 @@ class Parser
 
   def checkId
     lexime = @lexime
+    line_num = @lexer.lineno
     checktoken(:id, 1)
     if !(@id_table.has_key?(lexime))
-      puts "This variable(#{lexime}) is not declared(#{caller[0][/`([^']*)'/, 1]})."
+      puts "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is not declared."
       puts "Abort."
       exit(1)
     end
