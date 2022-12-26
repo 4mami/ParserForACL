@@ -16,7 +16,7 @@ class Parser
       @lexime = l
       @token = t
     }
-    program
+    program.accept(@evalvisitor)
   end
 
   private
@@ -81,11 +81,13 @@ class Parser
 
   def stmtpart
     checktoken(:begin)
-    stmt
+    tmp_stmts = []
+    tmp_stmts.push(stmt)
     while @token == :id || @token == :write
-      stmt
+      tmp_stmts.push(stmt)
     end
     checktoken(:end)
+    return Statements.new(tmp_stmts)
   end
 
   def stmt
@@ -117,12 +119,12 @@ class Parser
     checktoken(:write)
     ret = expression
     checktoken(:semi)
-    puts ret.last
+    return Print.new(ret)
   end
 
   def expression
     line_num = @lexer.lineno
-    type, value = sexp
+    node = sexp
     case @token
     when :lt, :gt, :le, :ge, :ne, :ee
       case @token
@@ -178,12 +180,12 @@ class Parser
     else
       # イプシロン
     end
-    return type, value
+    return node
   end
 
   def sexp
     line_num = @lexer.lineno
-    type, value = term
+    node = term
     while @token == :plus || @token == :minus || @token == :oror
       case @token
       when :plus
@@ -209,12 +211,12 @@ class Parser
         value = value || value2
       end
     end
-    return type, value
+    return node
   end
 
   def term
     line_num = @lexer.lineno
-    type, value = factor
+    node = factor
     while @token == :mult || @token == :div || @token == :andand
       case @token
       when :mult
@@ -240,7 +242,7 @@ class Parser
         value = value && value2
       end
     end
-    return type, value
+    return node
   end
 
   def factor
@@ -249,17 +251,11 @@ class Parser
       lexime = @lexime
       line_num = @lexer.lineno
       checkId
-      # 識別子が右辺に登場する場合は、既に代入されていないといけない
-      if @id_table[lexime].val.val.nil?
-        puts "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
-        puts "Abort."
-        exit(1)
-      end
       return @id_table[lexime]
     when :num
       lexime = @lexime
       checktoken(:num)
-      return :int, lexime.to_i
+      return Num.new(lexime.to_i)
     when :true
       checktoken(:true)
       return :bool, true

@@ -9,6 +9,11 @@ class EvalVisitor
     when Bool
       return node.val
     when Id
+      if node.val.val.nil?
+        puts "Runtime error! : You cannot use the variable that is not initialized."
+        puts "Abort."
+        exit(1)
+      end
       return node.val.accept(self) # 左のselfはEvalVisitorクラスのインスタンス
     when Not
     when Plus
