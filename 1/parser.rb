@@ -6,6 +6,11 @@ class Parser
   end
 
   def parse
+    if !(@output_file.nil?)
+      f = File.new("./output/#{@output_file}", 'a')
+      f.close
+    end
+
     @lexer.lex { |t, l|
       @lexime = l
       @token = t
