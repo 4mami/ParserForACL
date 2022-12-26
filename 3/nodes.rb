@@ -1,5 +1,5 @@
 class Num
-  attr_reader :val
+  attr_accessor :val
 
   def initialize(val)
     @val = val
@@ -11,7 +11,7 @@ class Num
 end
 
 class Bool
-  attr_reader :val
+  attr_accessor :val
 
   def initialize(val)
     @val = val
@@ -23,7 +23,7 @@ class Bool
 end
 
 class Id
-  attr_reader :val
+  attr_accessor :val
 
   def initialize(val)
     @val = val
@@ -230,7 +230,7 @@ end
 class Statements
   attr_reader :stmts
 
-  def initialize(*stmts)
+  def initialize(stmts)
     @stmts = stmts
   end
 
