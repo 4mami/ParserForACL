@@ -267,7 +267,7 @@ class Parser
       if type == :bool
         return :bool, !value
       else
-        # TODO: 整数を反転させた結果を返す
+        semanticErrormsg(__method__, line_num, 'Logical operation(!)', 'bool', value, '')
       end
     else
       errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :num, :true, :false, :lpar, :not)
