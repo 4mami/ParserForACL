@@ -20,8 +20,11 @@ class EvalVisitor
     when Plus
     when Minus
     when Mult
+      return node.left.accept(self) * node.right.accept(self)
     when Div
+      return node.left.accept(self) / node.right.accept(self)
     when Andand
+      return node.left.accept(self) && node.right.accept(self)
     when Oror
     when Lt
     when Gt

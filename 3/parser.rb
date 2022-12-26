@@ -221,25 +221,25 @@ class Parser
       case @token
       when :mult
         checktoken(:mult)
-        type2, value2 = factor
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Multiplication', 'integer', value, value2)
+        node2 = factor
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Multiplication', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value *= value2
+        node = Mult.new(node, node2)
       when :div
         checktoken(:div)
-        type2, value2 = factor
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Division', 'integer', value, value2)
+        node2 = factor
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Division', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value /= value2
+        node = Div.new(node, node2)
       when :andand
         checktoken(:andand)
-        type2, value2 = factor
-        if type != :bool || type2 != :bool
-          semanticErrormsg(__method__, line_num, 'Logical operation(&&)', 'bool', value, value2)
+        node2 = factor
+        if node.accept(@typevisitor) != :bool || node2.accept(@typevisitor) != :bool
+          semanticErrormsg(__method__, line_num, 'Logical operation(&&)', 'bool', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value = value && value2
+        node = Andand.new(node, node2)
       end
     end
     return node
