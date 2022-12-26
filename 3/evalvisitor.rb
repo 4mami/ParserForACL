@@ -26,7 +26,11 @@ class EvalVisitor
     when Assign
       node.left.val.val = node.right.accept(self)
     when Print
+      puts node.val.accept(self)
     when Statements
+      node.stmts.each do |stmt|
+        stmt.accept(self)
+      end
     end
   end
 end
