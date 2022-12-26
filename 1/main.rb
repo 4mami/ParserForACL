@@ -4,7 +4,7 @@ require './parser'
 def main
   # inputフォルダがあるなら
   if Dir.exist?('./input')
-    inputs = Dir.glob('./input/*.pas')
+    inputs = Dir.glob('./input/*.pas').sort
     # inputフォルダ内にpasファイルが1つ以上あるなら
     if !(inputs.empty?)
       if !(Dir.exist?('./output'))
