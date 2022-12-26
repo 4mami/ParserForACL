@@ -1,7 +1,8 @@
 class Parser
-  def initialize(lexer)
+  def initialize(lexer, output_file=nil)
     @lexime = ''
     @lexer = lexer
+    @output_file = output_file
   end
 
   def parse
@@ -204,7 +205,14 @@ class Parser
 
   def errormsg(func_name, line_num, current_lexime, current_token, *tokens)
     tks = tokens.join(' or ')
-    puts "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
+    msg = "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
+    puts msg
+    # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
+    if !(@output_file.nil?)
+      File.open("./output/#{@output_file}", 'w') do |f|
+        f.puts msg
+      end
+    end
     exit(1)
   end
 end
