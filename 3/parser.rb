@@ -109,7 +109,7 @@ class Parser
     checktoken(:coleq)
     node = expression
     if @id_table[lexime].accept(@typevisitor) != node.accept(@typevisitor)
-      semanticErrormsg(__method__, line_num, 'Assignation', 'same type', lexime, node.accept(@evalvisitor))
+      semanticErrormsg(__method__, line_num, 'Assignation', 'same type', lexime, node.accept(@typevisitor))
     end
     checktoken(:semi)
     return Assign.new(@id_table[lexime], node)
@@ -273,7 +273,7 @@ class Parser
       if node.accept(@typevisitor) == :bool
         return Not.new(node)
       else
-        semanticErrormsg(__method__, line_num, 'Logical operation(!)', 'bool', node.accept(@evalvisitor), '')
+        semanticErrormsg(__method__, line_num, 'Logical operation(!)', 'bool', node.accept(@typevisitor), '')
       end
     else
       errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :num, :true, :false, :lpar, :not)
