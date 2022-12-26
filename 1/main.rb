@@ -16,7 +16,11 @@ def main
           puts "input file: #{input_file}"
           mylex = Lexer.new(f)
           p = Parser.new(mylex, "#{input_file.slice(/\d.+/)}.out")
-          p.parse
+          begin
+            p.parse
+          rescue SystemExit
+            next
+          end
         end
       end
 
