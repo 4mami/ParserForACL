@@ -16,6 +16,7 @@ class EvalVisitor
       end
       return node.val.accept(self) # 左のselfはEvalVisitorクラスのインスタンス
     when Not
+      return !(node.val.accept(self))
     when Plus
     when Minus
     when Mult

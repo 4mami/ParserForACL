@@ -246,10 +246,10 @@ class Parser
   end
 
   def factor
+    line_num = @lexer.lineno
     case @token
     when :id
       lexime = @lexime
-      line_num = @lexer.lineno
       checkId
       return @id_table[lexime]
     when :num
@@ -258,22 +258,22 @@ class Parser
       return Num.new(lexime.to_i)
     when :true
       checktoken(:true)
-      return :bool, true
+      return Bool.new(true)
     when :false
       checktoken(:false)
-      return :bool, false
+      return Bool.new(false)
     when :lpar
       checktoken(:lpar)
-      type, value = expression
+      node = expression
       checktoken(:rpar)
-      return type, value
+      return node
     when :not
       checktoken(:not)
-      type, value = factor
-      if type == :bool
-        return :bool, !value
+      node = factor
+      if node.accept(@typevisitor) == :bool
+        return Not.new(node)
       else
-        # TODO: 整数を反転させた結果を返す
+        semanticErrormsg(__method__, line_num, 'Logical operation(!)', 'bool', node.accept(@evalvisitor), '')
       end
     else
       errormsg(__method__, @lexer.lineno, @lexime, @token, :id, :num, :true, :false, :lpar, :not)
