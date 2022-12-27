@@ -6,8 +6,12 @@ class Parser
   end
 
   def parse
+    # 出力用ファイル名が指定されているなら
     if !(@output_file.nil?)
-      f = File.new("./output/#{@output_file}", 'a')
+      if File.exist?("./output/#{@output_file}")
+        File.delete("./output/#{@output_file}")
+      end
+      f = File.new("./output/#{@output_file}", 'w')
       f.close
     end
 
