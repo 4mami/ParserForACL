@@ -1,5 +1,6 @@
 class EvalVisitor
-  def initialize
+  def initialize(output_file=nil)
+    @output_file = output_file
   end
 
   def visit(node)
@@ -10,8 +11,14 @@ class EvalVisitor
       return node.val
     when Id
       if node.val.val.nil?
-        puts "Runtime error! : You cannot use the variable that is not initialized."
+        msg = "Runtime error! : You cannot use the variable that is not initialized."
+        puts msg
         puts "Abort."
+        if !(@output_file.nil?)
+          File.open("./output/#{@output_file}", 'w') do |f|
+            f.puts msg
+          end
+        end
         exit(1)
       end
       return node.val.accept(self) # 左のselfはEvalVisitorクラスのインスタンス
