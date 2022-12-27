@@ -53,6 +53,7 @@ def main
 
       inputs.each do |input_file|
         File.open(input_file, 'r') do |f|
+          puts ''
           puts "input file: #{input_file}"
           mylex = Lexer.new(f)
           p = Parser.new(mylex, "#{input_file.slice(/\d.+/)}.out")
