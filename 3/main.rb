@@ -2,7 +2,7 @@ require './lexer'
 require './parser'
 
 def testForOutput
-  puts "\n"
+  puts "\n\n"
   puts '------動作確認結果------'
   outputs = Dir.glob('./output/*.out').sort
   count = 0
@@ -25,8 +25,19 @@ def testForOutput
       count += 1
     # 出力したファイルがエラーとなるコードに対する出力であるなら
     else
+      err_kind = 
+        case filename.slice(7, 3)
+        when 'syn'
+          'Syntax error!'
+        when 'sem'
+          'Semantic error!'
+        when 'run'
+          'Runtime error!'
+        else
+          raise "Input file's name is wrong: #{filename}"
+        end
       File.open(output_file).each do |line|
-        if line.include?('error!')
+        if line.include?(err_kind)
           puts "OK: #{filename}"
           count += 1
           is_next = true
