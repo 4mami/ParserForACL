@@ -35,7 +35,7 @@ class Parser
       end
       checktoken(:end)
     else
-
+      # イプシロン
     end
   end
 
