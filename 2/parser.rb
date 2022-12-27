@@ -1,11 +1,21 @@
 class Parser
-  def initialize(lexer)
+  def initialize(lexer, output_file=nil)
     @lexime = ''
     @lexer = lexer
     @id_table = {} # => {"var_a"=>[:int, 1], "var_b"=>[:bool, true]}
+    @output_file = output_file
   end
 
   def parse
+    # 出力用ファイル名が指定されているなら
+    if !(@output_file.nil?)
+      if File.exist?("./output/#{@output_file}")
+        File.delete("./output/#{@output_file}")
+      end
+      f = File.new("./output/#{@output_file}", 'w')
+      f.close
+    end
+
     @lexer.lex { |t, l|
       @lexime = l
       @token = t
@@ -241,8 +251,10 @@ class Parser
       checkId
       # 識別子が右辺に登場する場合は、既に代入されていないといけない
       if @id_table[lexime][1].nil?
-        puts "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
+        msg = "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
+        puts msg
         puts "Abort."
+        writeErrormsg(@output_file, msg)
         exit(1)
       end
       return @id_table[lexime][0], @id_table[lexime][1]
@@ -279,8 +291,10 @@ class Parser
     line_num = @lexer.lineno
     checktoken(:id, 1)
     if @id_table.has_key?(lexime)
-      puts "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is already declared."
+      msg = "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is already declared."
+      puts msg
       puts "Abort."
+      writeErrormsg(@output_file, msg)
       exit(1)
     else
       @id_table[lexime] = Array.new(2)
@@ -292,8 +306,10 @@ class Parser
     line_num = @lexer.lineno
     checktoken(:id, 1)
     if !(@id_table.has_key?(lexime))
-      puts "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is not declared."
+      msg = "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is not declared."
+      puts msg
       puts "Abort."
+      writeErrormsg(@output_file, msg)
       exit(1)
     end
   end
@@ -313,13 +329,26 @@ class Parser
 
   def errormsg(func_name, line_num, current_lexime, current_token, *tokens)
     tks = tokens.join(' or ')
-    puts "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
+    msg = "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
+    puts msg
+    writeErrormsg(@output_file, msg)
     exit(1)
   end
 
   def semanticErrormsg(func_name, line_num, opr_name, type_name, value, value2)
-    puts "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} and/or #{value2} is not #{type_name}."
+    msg = "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} and/or #{value2} is not #{type_name}."
+    puts msg
     puts "Abort."
+    writeErrormsg(@output_file, msg)
     exit(1)
+  end
+
+  def writeErrormsg(output_file, msg)
+    # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
+    if !(output_file.nil?)
+      File.open("./output/#{output_file}", 'w') do |f|
+        f.puts msg
+      end
+    end
   end
 end
