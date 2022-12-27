@@ -1,0 +1,3 @@
+begin
+    a := true;
+end
