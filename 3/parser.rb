@@ -130,52 +130,46 @@ class Parser
       case @token
       when :lt # <
         checktoken(:lt)
-        type2, value2 = sexp
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Comparison operation(<)', 'integer', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(<)', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value < value2
+        node = Lt.new(node, node2)
       when :gt # >
         checktoken(:gt)
-        type2, value2 = sexp
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Comparison operation(>)', 'integer', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(>)', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value > value2
+        node = Gt.new(node, node2)
       when :le # <=
         checktoken(:le)
-        type2, value2 = sexp
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Comparison operation(<=)', 'integer', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(<=)', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value <= value2
+        node = Le.new(node, node2)
       when :ge # >=
         checktoken(:ge)
-        type2, value2 = sexp
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Comparison operation(>=)', 'integer', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Comparison operation(>=)', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value >= value2
+        node = Ge.new(node, node2)
       when :ne # !=
         checktoken(:ne)
-        type2, value2 = sexp
-        if type != type2
-          semanticErrormsg(__method__, line_num, 'Comparison operation(!=)', 'same type', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != node2.accept(@typevisitor)
+          semanticErrormsg(__method__, line_num, 'Comparison operation(!=)', 'same type', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value != value2
+        node = Ne.new(node, node2)
       when :ee # ==
         checktoken(:ee)
-        type2, value2 = sexp
-        if type != type2
-          semanticErrormsg(__method__, line_num, 'Comparison operation(==)', 'same type', value, value2)
+        node2 = sexp
+        if node.accept(@typevisitor) != node2.accept(@typevisitor)
+          semanticErrormsg(__method__, line_num, 'Comparison operation(==)', 'same type', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        type = :bool
-        value = value == value2
+        node = Ee.new(node, node2)
       end
     else
       # イプシロン

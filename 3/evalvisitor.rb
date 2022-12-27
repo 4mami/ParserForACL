@@ -30,11 +30,17 @@ class EvalVisitor
     when Oror
       return node.left.accept(self) || node.right.accept(self)
     when Lt
+      return node.left.accept(self) < node.right.accept(self)
     when Gt
+      return node.left.accept(self) > node.right.accept(self)
     when Le
+      return node.left.accept(self) <= node.right.accept(self)
     when Ge
+      return node.left.accept(self) >= node.right.accept(self)
     when Ne
+      return node.left.accept(self) != node.right.accept(self)
     when Ee
+      return node.left.accept(self) == node.right.accept(self)
     when Assign
       node.left.val.val = node.right.accept(self)
     when Print
