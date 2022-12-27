@@ -190,25 +190,25 @@ class Parser
       case @token
       when :plus
         checktoken(:plus)
-        type2, value2 = term
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Addition', 'integer', value, value2)
+        node2 = term
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Addition', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value += value2
+        node = Plus.new(node, node2)
       when :minus
         checktoken(:minus)
-        type2, value2 = term
-        if type != :int || type2 != :int
-          semanticErrormsg(__method__, line_num, 'Subtraction', 'integer', value, value2)
+        node2 = term
+        if node.accept(@typevisitor) != :int || node2.accept(@typevisitor) != :int
+          semanticErrormsg(__method__, line_num, 'Subtraction', 'integer', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value -= value2
+        node = Minus.new(node, node2)
       when :oror
         checktoken(:oror)
-        type2, value2 = term
-        if type != :bool || type2 != :bool
-          semanticErrormsg(__method__, line_num, 'Logical operation(||)', 'bool', value, value2)
+        node2 = term
+        if node.accept(@typevisitor) != :bool || node2.accept(@typevisitor) != :bool
+          semanticErrormsg(__method__, line_num, 'Logical operation(||)', 'bool', node.accept(@typevisitor), node2.accept(@typevisitor))
         end
-        value = value || value2
+        node = Oror.new(node, node2)
       end
     end
     return node
