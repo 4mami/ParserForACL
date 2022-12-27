@@ -11,11 +11,7 @@ class TypeVisitor
     when Id
       return node.val.accept(self) # 左のselfはTypeVisitorクラスのインスタンス
     when Not
-      if node.val.accept(self) == :bool
-        return :bool
-      else
-        # TODO: 整数を反転させた結果の型を返す
-      end
+      return :bool
     when Plus
       return :int
     when Minus
