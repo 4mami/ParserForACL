@@ -7,7 +7,6 @@ class Parser
     @lexime = ''
     @lexer = lexer
     @id_table = {} # => {"var_a"=>object(Id), "var_b"=>object(Id)}
-    @evalvisitor = EvalVisitor.new
     @typevisitor = TypeVisitor.new
   end
 
@@ -16,7 +15,7 @@ class Parser
       @lexime = l
       @token = t
     }
-    program.accept(@evalvisitor)
+    program.accept(EvalVisitor.new)
   end
 
   private
