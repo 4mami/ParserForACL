@@ -1,5 +1,5 @@
 var end
 
 begin
-    a := 1;
+    write 1;
 end

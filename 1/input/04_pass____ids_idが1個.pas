@@ -3,5 +3,5 @@ var
 end
 
 begin
-    a := 1;
+    ab := 1;
 end
