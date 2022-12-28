@@ -1,3 +1,3 @@
 begin
-    write 1 != 1 ー 2;
+    write 1 ー 2;
 end

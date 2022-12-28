@@ -1,3 +1,3 @@
 begin
-    write 1 != 1 + 2 - * 1;
+    write * 1;
 end

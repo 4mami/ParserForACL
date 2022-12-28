@@ -1,3 +1,3 @@
 begin
-    write true != true || false;
+    write true || false;
 end
