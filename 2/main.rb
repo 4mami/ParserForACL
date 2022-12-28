@@ -2,10 +2,12 @@ require './lexer'
 require './parser'
 
 def testForOutput
-  puts "\n\n"
+  puts "\n"
   puts '------動作確認結果------'
   outputs = Dir.glob('./output/*.out').sort
-  count = 0
+  count_file = 1
+  count_ok = 0
+  count_ng = 0
   outputs.each do |output_file|
     filename = File.basename(output_file)
     is_next = false
@@ -14,15 +16,17 @@ def testForOutput
     if filename.slice(3, 4) == 'pass'
       File.open(output_file).each do |line|
         if line.include?('error!')
-          puts "NG: #{filename}"
-          count += 1
+          puts "#{format('%03d', count_file)} NG: #{filename}"
+          count_ng += 1
+          count_file += 1
           is_next = true
           break
         end
       end
       next if is_next
-      puts "OK: #{filename}"
-      count += 1
+      puts "#{format('%03d', count_file)} OK: #{filename}"
+      count_ok += 1
+      count_file += 1
       # 出力したファイルがエラーとなるコードに対する出力であるなら
     else
       err_kind = 
@@ -34,23 +38,28 @@ def testForOutput
         when 'run'
           'Runtime error!'
         else
-          puts "Wrong file name: #{filename}"
+          puts "#{format('%03d', count_file)} Wrong file name: #{filename}"
+          count_file += 1
           next
         end
       File.open(output_file).each do |line|
         if line.include?(err_kind)
-          puts "OK: #{filename}"
-          count += 1
+          puts "#{format('%03d', count_file)} OK: #{filename}"
+          count_ok += 1
+          count_file += 1
           is_next = true
           break
         end
       end
       next if is_next
-      puts "NG: #{filename}"
-      count += 1
+      puts "#{format('%03d', count_file)} NG: #{filename}"
+      count_ng += 1
+      count_file += 1
     end
   end
-  puts "#{count}/#{outputs.size}ファイルの動作確認を完了"
+  puts "#{count_ok + count_ng}/#{outputs.size}ファイルの動作確認を完了"
+  puts "動作確認結果OK: #{count_ok}ファイル"
+  puts "動作確認結果NG: #{count_ng}ファイル"
 end
 
 def main
