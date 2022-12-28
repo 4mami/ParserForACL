@@ -231,7 +231,15 @@ class Parser
         if type != :int || type2 != :int
           semanticErrormsg(__method__, line_num, 'Division', 'integer', value, value2)
         end
-        value /= value2
+        begin
+          value /= value2
+        rescue ZeroDivisionError
+          msg = "Runtime error! (line: #{line_num})(func: term) : You cannot do zero division."
+          puts msg
+          puts "Abort."
+          writeMsg(@output_file, msg)
+          exit(1)
+        end
       when :andand
         checktoken(:andand)
         type2, value2 = factor

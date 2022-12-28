@@ -27,7 +27,15 @@ class EvalVisitor
     when Mult
       return node.left.accept(self) * node.right.accept(self)
     when Div
-      return node.left.accept(self) / node.right.accept(self)
+      begin
+        return node.left.accept(self) / node.right.accept(self)
+      rescue ZeroDivisionError
+        msg = "Runtime error! : You cannot do zero division."
+        puts msg
+        puts "Abort."
+        writeMsg(@output_file, msg)
+        exit(1)
+      end
     when Andand
       return node.left.accept(self) && node.right.accept(self)
     when Oror
