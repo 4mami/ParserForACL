@@ -33,10 +33,10 @@ def testForOutput
         if !(index.nil?)
           # その要素を削除する
           extracted_outputs.delete_at(index)
-        end
-        # indexが0より大きかったら（ファイル名の想定とwriteされた値の順番が異なるなら）、NGフラグを立てる
-        if index > 0
-          is_ng = true
+          # indexが0より大きかったら（ファイル名の想定とwriteされた値の順番が異なるなら）、NGフラグを立てる
+          if index > 0
+            is_ng = true
+          end
         end
         count_line += 1
       end
