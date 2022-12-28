@@ -23,7 +23,7 @@ def testForOutput
       next if is_next
       puts "OK: #{filename}"
       count += 1
-    # 出力したファイルがエラーとなるコードに対する出力であるなら
+      # 出力したファイルがエラーとなるコードに対する出力であるなら
     else
       err_kind = 
         case filename.slice(7, 3)
@@ -64,15 +64,17 @@ def main
           Dir.mkdir('./output')
         end
 
+        count = 1
         inputs.each do |input_file|
           File.open(input_file, 'r') do |f|
-            puts ''
-            puts "input file: #{File.basename(input_file)}"
+            puts "#{format('%03d', count)} input file: #{File.basename(input_file)}"
             mylex = Lexer.new(f)
             p = Parser.new(mylex, "#{File.basename(input_file)}.out")
+            count += 1
             begin
               p.parse
             rescue SystemExit
+              puts ''
               next
             end
           end
