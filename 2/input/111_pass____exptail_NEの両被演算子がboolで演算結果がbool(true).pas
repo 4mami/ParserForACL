@@ -3,6 +3,6 @@ var
 end
 
 begin
-    a = true != false;
+    a := true != false;
     write a;
 end

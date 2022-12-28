@@ -3,6 +3,6 @@ var
 end
 
 begin
-    a = 0 / 1;
+    a := 0 / 1;
     write a;
 end

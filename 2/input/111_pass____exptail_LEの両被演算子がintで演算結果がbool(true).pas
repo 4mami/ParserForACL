@@ -3,6 +3,6 @@ var
 end
 
 begin
-    a = 1 <= 1;
+    a := 1 <= 1;
     write a;
 end

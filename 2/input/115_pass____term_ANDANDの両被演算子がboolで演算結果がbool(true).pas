@@ -3,6 +3,6 @@ var
 end
 
 begin
-    a = true && true;
+    a := true && true;
     write a;
 end
