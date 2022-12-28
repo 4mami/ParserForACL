@@ -14,6 +14,10 @@ def testForOutput
 
     # 出力したファイルが正常なコードに対する出力であるなら
     if filename.slice(4, 4) == 'pass'
+      # filenameから()内の要素をすべて取得して、配列に入れる（なかったら空配列が作られる）
+      extracted_outputs = filename.scan(/\(.+?\)/).map {|x| x.sub(/^\(/, '').sub(/\)$/, '')}
+      length = extracted_outputs.length
+      count_line = 0
       File.open(output_file).each do |line|
         if line.include?('error!')
           puts "#{format('%03d', count_file)} NG: #{filename}"
@@ -22,8 +26,24 @@ def testForOutput
           is_next = true
           break
         end
+
+        # lineが上の配列に含まれていたら（完全一致）
+        index = extracted_outputs.index(line.chomp)
+        if !(index.nil?)
+          # その要素を削除する
+          extracted_outputs.delete_at(index)
+        end
+        count_line += 1
       end
+
       next if is_next
+      # 配列サイズと行数カウントが一致していない、または上の配列の要素数が1以上だったら
+      if length != count_line || extracted_outputs.length > 0
+        puts "#{format('%03d', count_file)} NG: #{filename}"
+        count_ng += 1
+        count_file += 1
+        next
+      end
       puts "#{format('%03d', count_file)} OK: #{filename}"
       count_ok += 1
       count_file += 1
