@@ -14,11 +14,7 @@ class EvalVisitor
         msg = "Runtime error! : You cannot use the variable that is not initialized."
         puts msg
         puts "Abort."
-        if !(@output_file.nil?)
-          File.open("./output/#{@output_file}", 'w') do |f|
-            f.puts msg
-          end
-        end
+        writeMsg(@output_file, msg)
         exit(1)
       end
       return node.val.accept(self) # 左のselfはEvalVisitorクラスのインスタンス
@@ -51,10 +47,23 @@ class EvalVisitor
     when Assign
       node.left.val.val = node.right.accept(self)
     when Print
-      puts node.val.accept(self)
+      ret = node.val.accept(self)
+      puts ret
+      writeMsg(@output_file, ret)
     when Statements
       node.stmts.each do |stmt|
         stmt.accept(self)
+      end
+    end
+  end
+
+  private
+
+  def writeMsg(output_file, msg)
+    # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
+    if !(output_file.nil?)
+      File.open("./output/#{output_file}", 'w') do |f|
+        f.puts msg
       end
     end
   end

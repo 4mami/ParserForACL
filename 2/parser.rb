@@ -118,6 +118,7 @@ class Parser
     ret = expression
     checktoken(:semi)
     puts ret.last
+    writeMsg(@output_file, ret.last)
   end
 
   def expression
@@ -254,7 +255,7 @@ class Parser
         msg = "Runtime error! (line: #{line_num})(func: factor) : This variable(#{lexime}) is not initialized."
         puts msg
         puts "Abort."
-        writeErrormsg(@output_file, msg)
+        writeMsg(@output_file, msg)
         exit(1)
       end
       return @id_table[lexime][0], @id_table[lexime][1]
@@ -294,7 +295,7 @@ class Parser
       msg = "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is already declared."
       puts msg
       puts "Abort."
-      writeErrormsg(@output_file, msg)
+      writeMsg(@output_file, msg)
       exit(1)
     else
       @id_table[lexime] = Array.new(2)
@@ -309,7 +310,7 @@ class Parser
       msg = "Semantic error! (line: #{line_num})(func: #{caller[0][/`([^']*)'/, 1]}) : This variable(#{lexime}) is not declared."
       puts msg
       puts "Abort."
-      writeErrormsg(@output_file, msg)
+      writeMsg(@output_file, msg)
       exit(1)
     end
   end
@@ -331,7 +332,7 @@ class Parser
     tks = tokens.join(' or ')
     msg = "Syntax error! (line: #{line_num})(func: #{func_name})(cr lexime: #{current_lexime})(cr token: #{current_token}) : #{tks} is expected."
     puts msg
-    writeErrormsg(@output_file, msg)
+    writeMsg(@output_file, msg)
     exit(1)
   end
 
@@ -339,11 +340,11 @@ class Parser
     msg = "Semantic error! (line: #{line_num})(func: #{func_name}) : #{opr_name} cannot be done because #{value} and/or #{value2} is not #{type_name}."
     puts msg
     puts "Abort."
-    writeErrormsg(@output_file, msg)
+    writeMsg(@output_file, msg)
     exit(1)
   end
 
-  def writeErrormsg(output_file, msg)
+  def writeMsg(output_file, msg)
     # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
     if !(output_file.nil?)
       File.open("./output/#{output_file}", 'w') do |f|
