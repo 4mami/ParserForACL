@@ -34,7 +34,8 @@ def testForOutput
         when 'run'
           'Runtime error!'
         else
-          raise "Input file's name is wrong: #{filename}"
+          puts "Wrong file name: #{filename}"
+          next
         end
       File.open(output_file).each do |line|
         if line.include?(err_kind)
@@ -53,33 +54,40 @@ def testForOutput
 end
 
 def main
-  # inputフォルダがあるなら
-  if Dir.exist?('./input')
-    inputs = Dir.glob('./input/*.pas').sort
-    # inputフォルダ内にpasファイルが1つ以上あるなら
-    if !(inputs.empty?)
-      if !(Dir.exist?('./output'))
-        Dir.mkdir('./output')
-      end
+  if !(ARGV.empty?) && ARGV[0] == '--use-input-file'
+    # inputフォルダがあるなら
+    if Dir.exist?('./input')
+      inputs = Dir.glob('./input/*.pas').sort
+      # inputフォルダ内にpasファイルが1つ以上あるなら
+      if !(inputs.empty?)
+        if !(Dir.exist?('./output'))
+          Dir.mkdir('./output')
+        end
 
-      inputs.each do |input_file|
-        File.open(input_file, 'r') do |f|
-          puts ''
-          puts "input file: #{input_file}"
-          mylex = Lexer.new(f)
-          p = Parser.new(mylex, "#{input_file.slice(/\d.+/)}.out")
-          begin
-            p.parse
-          rescue SystemExit
-            next
+        inputs.each do |input_file|
+          File.open(input_file, 'r') do |f|
+            puts ''
+            puts "input file: #{input_file}"
+            mylex = Lexer.new(f)
+            p = Parser.new(mylex, "#{input_file.slice(/\d.+/)}.out")
+            begin
+              p.parse
+            rescue SystemExit
+              next
+            end
           end
         end
-      end
 
-      testForOutput
-      return
+        testForOutput
+        return
+      else
+        puts 'It\'s unable to use input files because of no input file.'
+      end
+    else
+      puts 'It\'s unable to use input files because of no input folder.'
     end
   end
+  puts "Type your acl code!\n\n"
   mylex = Lexer.new($stdin)
   p = Parser.new(mylex)
   p.parse # lexer.lex()の戻り値(true/false)が返ってきてる
