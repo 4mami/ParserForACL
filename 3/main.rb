@@ -7,7 +7,7 @@ def testForOutput
   outputs = Dir.glob('./output/*.out').sort
   count = 0
   outputs.each do |output_file|
-    filename = output_file.slice(/\d.+/)
+    filename = File.basename(output_file)
     is_next = false
 
     # 出力したファイルが正常なコードに対する出力であるなら
@@ -67,9 +67,9 @@ def main
         inputs.each do |input_file|
           File.open(input_file, 'r') do |f|
             puts ''
-            puts "input file: #{input_file}"
+            puts "input file: #{File.basename(input_file)}"
             mylex = Lexer.new(f)
-            p = Parser.new(mylex, "#{input_file.slice(/\d.+/)}.out")
+            p = Parser.new(mylex, "#{File.basename(input_file)}.out")
             begin
               p.parse
             rescue SystemExit
