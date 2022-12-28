@@ -2,4 +2,4 @@ begin
     a := 1;
 end
 
-var a : int;
+var a : int; end
