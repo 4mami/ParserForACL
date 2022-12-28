@@ -18,6 +18,7 @@ def testForOutput
       extracted_outputs = filename.scan(/\(.+?\)/).map {|x| x.sub(/^\(/, '').sub(/\)$/, '')}
       length = extracted_outputs.length
       count_line = 0
+      is_ng = false
       File.open(output_file).each do |line|
         if line.include?('error!')
           puts "#{format('%03d', count_file)} NG: #{filename}"
@@ -33,12 +34,16 @@ def testForOutput
           # その要素を削除する
           extracted_outputs.delete_at(index)
         end
+        # indexが0より大きかったら（ファイル名の想定とwriteされた値の順番が異なるなら）、NGフラグを立てる
+        if index > 0
+          is_ng = true
+        end
         count_line += 1
       end
 
       next if is_next
       # 配列サイズと行数カウントが一致していない、または上の配列の要素数が1以上だったら
-      if length != count_line || extracted_outputs.length > 0
+      if length != count_line || extracted_outputs.length > 0 || is_ng
         puts "#{format('%03d', count_file)} NG: #{filename}"
         count_ng += 1
         count_file += 1
