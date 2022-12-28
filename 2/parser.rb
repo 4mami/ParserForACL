@@ -118,7 +118,7 @@ class Parser
     ret = expression
     checktoken(:semi)
     puts ret.last
-    writeMsg(@output_file, ret.last)
+    writeMsg(@output_file, ret.last, 'a')
   end
 
   def expression
@@ -344,10 +344,10 @@ class Parser
     exit(1)
   end
 
-  def writeMsg(output_file, msg)
+  def writeMsg(output_file, msg, mode='w')
     # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
     if !(output_file.nil?)
-      File.open("./output/#{output_file}", 'w') do |f|
+      File.open("./output/#{output_file}", mode) do |f|
         f.puts msg
       end
     end

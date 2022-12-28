@@ -49,7 +49,7 @@ class EvalVisitor
     when Print
       ret = node.val.accept(self)
       puts ret
-      writeMsg(@output_file, ret)
+      writeMsg(@output_file, ret, 'a')
     when Statements
       node.stmts.each do |stmt|
         stmt.accept(self)
@@ -59,10 +59,10 @@ class EvalVisitor
 
   private
 
-  def writeMsg(output_file, msg)
+  def writeMsg(output_file, msg, mode='w')
     # 出力用ファイルがnilじゃなかったら、ファイルにも出力を書き込む
     if !(output_file.nil?)
-      File.open("./output/#{output_file}", 'w') do |f|
+      File.open("./output/#{output_file}", mode) do |f|
         f.puts msg
       end
     end
