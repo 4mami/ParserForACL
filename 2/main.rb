@@ -13,7 +13,7 @@ def testForOutput
     is_next = false
 
     # 出力したファイルが正常なコードに対する出力であるなら
-    if filename.slice(3, 4) == 'pass'
+    if filename.slice(4, 4) == 'pass'
       File.open(output_file).each do |line|
         if line.include?('error!')
           puts "#{format('%03d', count_file)} NG: #{filename}"
@@ -30,7 +30,7 @@ def testForOutput
       # 出力したファイルがエラーとなるコードに対する出力であるなら
     else
       err_kind = 
-        case filename.slice(7, 3)
+        case filename.slice(8, 3)
         when 'syn'
           'Syntax error!'
         when 'sem'
