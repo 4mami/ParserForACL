@@ -1,0 +1,3 @@
+begin
+    write a;
+end
